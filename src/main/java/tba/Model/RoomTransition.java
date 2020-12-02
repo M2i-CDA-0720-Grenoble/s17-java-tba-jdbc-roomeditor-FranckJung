@@ -49,7 +49,10 @@ public class RoomTransition {
     public static List<RoomTransition> findAllFromRoom(Room room)
     {
         try {
-            PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement("SELECT * FROM `room_transition` WHERE `from_room_id` = ?");
+            PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement("SELECT * FROM `room_transition` WHERE `from_room_id` = ?"
+            ,ResultSet.TYPE_SCROLL_SENSITIVE
+            ,ResultSet.CONCUR_UPDATABLE
+            );
             statement.setInt(1, room.getId());
             ResultSet set = statement.executeQuery();
     
@@ -76,7 +79,10 @@ public class RoomTransition {
     public static RoomTransition findByFromRoomAndDirection(Room room, Direction direction)
     {
         try {
-            PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement("SELECT * FROM `room_transition` WHERE `from_room_id` = ? AND `direction_id` = ?");
+            PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement("SELECT * FROM `room_transition` WHERE `from_room_id` = ? AND `direction_id` = ?"
+            ,ResultSet.TYPE_SCROLL_SENSITIVE
+            ,ResultSet.CONCUR_UPDATABLE
+            );
             statement.setInt(1, room.getId());
             statement.setInt(2, direction.getId());
             ResultSet set = statement.executeQuery();
