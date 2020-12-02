@@ -1,8 +1,6 @@
 package tba.Model;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +13,11 @@ public class Room
     private String name;
     private String description;
 
+    public Room(){
+        id=0;
+        name="";
+        description="";
+    }
 
     public Room(int id, String name, String description)
     {
@@ -82,6 +85,63 @@ public class Room
             exception.printStackTrace();
             System.exit(1);
             return null;
+        }
+    }
+
+    public void save()
+    {
+        if (id == 0) {
+            insert();
+        } else {
+            update();
+        }
+    }
+
+    private void insert()
+    {
+        try {
+            PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement("INSERT INTO `room` (`name`, `description`) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, name);
+            statement.setString(2, description);
+            statement.executeUpdate();
+            ResultSet set = statement.getGeneratedKeys();
+            if (set.first()) {
+                id = set.getInt(1);
+                return;
+            }
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    private void update()
+    {
+        try {
+            PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement("UPDATE `room` SET `name` = ?, `descritpion` = ? WHERE `id` = ?");
+            statement.setString(1, name);
+            statement.setString(2, description);
+            statement.setInt(3, id);
+            statement.executeUpdate();
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    public void delete()
+    {
+        try {
+            PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement("DELETE FROM `room` WHERE `id` = ?");
+            statement.setInt(1, id);
+            statement.executeUpdate();
+            id = 0;
+        }
+        catch (SQLException exception) {
+            exception.printStackTrace();
+            System.exit(1);
         }
     }
 
